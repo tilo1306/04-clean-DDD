@@ -1,20 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AnswerQuestionUseCase } from './answer-question'
-import { Answer } from '@/domain/forum/enterprise/entities/answer'
-import { IAnswersRepository } from '../repositories/IAnswersRepository'
+import { InMemoryAnswerRepository } from 'test/repositories/in-memories-answer-repository'
 
-const fakeAnswerQuestion: IAnswersRepository = {
-  create: async function (answer: Answer): Promise<void> {},
-}
+let inMemoryAnswerRepository: InMemoryAnswerRepository
+let sut: AnswerQuestionUseCase
 
-test('Create an Answer', async () => {
-  const answerQuestion = new AnswerQuestionUseCase(fakeAnswerQuestion)
-
-  const answer = await answerQuestion.execute({
-    content: 'New Answer',
-    instructorId: '1',
-    questionId: '1',
+describe('Create Answer', () => {
+  beforeEach(() => {
+    inMemoryAnswerRepository = new InMemoryAnswerRepository()
+    sut = new AnswerQuestionUseCase(inMemoryAnswerRepository)
   })
 
-  expect(answer.content).toEqual('New Answer')
+  it('should be able to create a answer', async () => {
+    const { answer } = await sut.execute({
+      content: 'New Answer',
+      instructorId: '2',
+      questionId: '1',
+    })
+
+    expect(answer.content).toEqual('New Answer')
+    expect(inMemoryAnswerRepository.db[0].questionId).toEqual(answer.questionId)
+    expect(inMemoryAnswerRepository.db[0].authorId).toEqual(answer.authorId)
+  })
 })

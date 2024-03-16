@@ -5,7 +5,7 @@ import { Optional } from '@/core/types/optional'
 import dayjs from 'dayjs'
 
 interface IQuestionProps {
-  autorId: UniqueEntityID
+  authorId: UniqueEntityID
   bestAnswerId?: UniqueEntityID
   content: string
   title: string
@@ -16,7 +16,7 @@ interface IQuestionProps {
 
 export class Question extends Entity<IQuestionProps> {
   get authorId() {
-    return this.props.autorId
+    return this.props.authorId
   }
 
   get bestAnswerId() {

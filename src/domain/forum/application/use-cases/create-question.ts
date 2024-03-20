@@ -21,7 +21,7 @@ export class CreateQuestionUseCase {
     title,
   }: ICreateQuestionUseCase): Promise<ICreateQuestionResponse> {
     const question = Question.create({
-      autorId: new UniqueEntityID(authorId),
+      authorId: new UniqueEntityID(authorId),
       content,
       title,
     })

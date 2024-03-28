@@ -1,3 +1,4 @@
+import { PaginationParams } from '@/core/repositories/pagination-params'
 import { IQuestionsRepository } from '@/domain/forum/application/repositories/IQuestionsRepository'
 import { Question } from '@/domain/forum/enterprise/entities/question'
 
@@ -16,6 +17,14 @@ export class InMemoryQuestionsRepository implements IQuestionsRepository {
     }
 
     return question
+  }
+
+  async findManyRecent({ page }: PaginationParams) {
+    const questions = this.db
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * 20, page * 20)
+
+    return questions
   }
 
   async findById(questionId: string): Promise<Question | null> {

@@ -4,9 +4,27 @@ import { QuestionComment } from '@/domain/forum/enterprise/entities/question-com
 export class InMemoryQuestionCommentsRepository
   implements IQuestionCommentsRepository
 {
-  public items: QuestionComment[] = []
+  public db: QuestionComment[] = []
+
+  async findById(id: string) {
+    const questionComment = this.db.find((item) => item.id.toString() === id)
+
+    if (!questionComment) {
+      return null
+    }
+
+    return questionComment
+  }
 
   async create(questionComment: QuestionComment) {
-    this.items.push(questionComment)
+    this.db.push(questionComment)
+  }
+
+  async delete(questionComment: QuestionComment) {
+    const itemIndex = this.db.findIndex(
+      (item) => item.id === questionComment.id,
+    )
+
+    this.db.splice(itemIndex, 1)
   }
 }

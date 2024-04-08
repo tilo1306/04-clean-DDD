@@ -1,5 +1,8 @@
+import { Either, left, right } from '@/core/either'
 import { Question } from '../../enterprise/entities/question'
 import { IQuestionsRepository } from '../repositories/IQuestionsRepository'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 interface IEditQuestionUseCase {
   authorId: string
@@ -8,9 +11,12 @@ interface IEditQuestionUseCase {
   questionId: string
 }
 
-interface IEditQuestionResponse {
-  question: Question
-}
+type EditQuestionUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  {
+    question: Question
+  }
+>
 
 export class EditQuestionUseCase {
   constructor(private questionRepository: IQuestionsRepository) {}
@@ -20,24 +26,24 @@ export class EditQuestionUseCase {
     questionId,
     content,
     title,
-  }: IEditQuestionUseCase): Promise<IEditQuestionResponse> {
-    const findQuestion = await this.questionRepository.findById(questionId)
+  }: IEditQuestionUseCase): Promise<EditQuestionUseCaseResponse> {
+    const question = await this.questionRepository.findById(questionId)
 
-    if (!findQuestion) {
-      throw new Error('Question not found.')
+    if (!question) {
+      return left(new ResourceNotFoundError())
     }
 
-    if (findQuestion.authorId.toString() !== authorId) {
-      throw new Error('Not allowed.')
+    if (authorId !== question.authorId.toString()) {
+      return left(new NotAllowedError())
     }
 
-    findQuestion.title = title
-    findQuestion.content = content
+    question.title = title
+    question.content = content
 
-    await this.questionRepository.save(findQuestion)
+    await this.questionRepository.save(question)
 
-    return {
-      question: findQuestion,
-    }
+    return right({
+      question,
+    })
   }
 }

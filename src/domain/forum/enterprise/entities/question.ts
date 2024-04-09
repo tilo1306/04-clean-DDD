@@ -1,3 +1,4 @@
+import { AggregateRoot } from '@/core/entities/aggregate-root'
 import { Slug } from './value-objects/slug'
 import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
@@ -14,7 +15,7 @@ export interface IQuestionProps {
   updatedAt?: Date
 }
 
-export class Question extends Entity<IQuestionProps> {
+export class Question extends AggregateRoot<IQuestionProps> {
   get authorId() {
     return this.props.authorId
   }

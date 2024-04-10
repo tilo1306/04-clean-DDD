@@ -1,0 +1,16 @@
+import { IQuestionAttachmentsRepository } from '@/domain/forum/application/repositories/IQuestionAttachmentsRepository'
+import { QuestionAttachment } from '@/domain/forum/enterprise/entities/question-attachment'
+
+export class InMemoryQuestionAttachmentsRepository
+  implements IQuestionAttachmentsRepository
+{
+  public items: QuestionAttachment[] = []
+
+  async findManyByQuestionId(questionId: string) {
+    const questionAttachments = this.items.filter(
+      (item) => item.questionId.toString() === questionId,
+    )
+
+    return questionAttachments
+  }
+}

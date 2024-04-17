@@ -13,9 +13,11 @@ let sut: EditQuestionUseCase
 
 describe('Edit an question', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
     inMemoryQuestionAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
+    )
     sut = new EditQuestionUseCase(
       inMemoryQuestionsRepository,
       inMemoryQuestionAttachmentsRepository,
@@ -44,11 +46,16 @@ describe('Edit an question', () => {
     )
 
     await sut.execute({
-      questionId: 'question-1',
+      questionId: newQuestion.id.toValue(),
       authorId: 'author-1',
-      title: 'Um Titulo qualquer',
-      content: 'Um Conteudo Qualquer',
+      title: 'Pergunta teste',
+      content: 'Conteúdo teste',
       attachmentsIds: ['1', '3'],
+    })
+
+    expect(inMemoryQuestionsRepository.db[0]).toMatchObject({
+      title: 'Pergunta teste',
+      content: 'Conteúdo teste',
     })
 
     expect(

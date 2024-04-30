@@ -1,3 +1,4 @@
+import { DomainEvents } from '@/core/events/domain-events'
 import { PaginationParams } from '@/core/repositories/pagination-params'
 import { IQuestionAttachmentsRepository } from '@/domain/forum/application/repositories/IQuestionAttachmentsRepository'
 import { IQuestionsRepository } from '@/domain/forum/application/repositories/IQuestionsRepository'
@@ -12,6 +13,7 @@ export class InMemoryQuestionsRepository implements IQuestionsRepository {
 
   async create(question: Question): Promise<void> {
     this.db.push(question)
+    DomainEvents.dispatchEventsForAggregate(question.id)
   }
 
   async findBySlug(slug: string): Promise<Question | null> {
@@ -56,5 +58,6 @@ export class InMemoryQuestionsRepository implements IQuestionsRepository {
     const itemIndex = this.db.findIndex((item) => item.id === question.id)
 
     this.db[itemIndex] = question
+    DomainEvents.dispatchEventsForAggregate(question.id)
   }
 }
